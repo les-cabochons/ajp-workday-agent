@@ -40,7 +40,7 @@ Requires an Ajour build with plugin API 4 agent tasks, which declare their MCP t
 
 ## Plugin API 4 and the tools each task gets
 
-The manifest declares `apiVersion: 4`. It has no `entrypoint`, no `network` and no connection fields: the plugin has no code, and the agent reaches Workday through the browser, not through Ajour's broker. Each task lists, in `tools`, the Ajour MCP tools its run may call. A run's MCP client gets only those, plus the session tools (`update_session`, `end_session`, `ask`) that every run has. A call to any other tool is refused.
+The manifest declares `apiVersion: 4`. It has no `entrypoint`, no `network` and no connection fields: the plugin has no code, and the agent reaches Workday through the browser, not through Ajour's broker. Each task lists, in `tools`, the Ajour MCP tools its run may call. A run's MCP client gets only those, plus the session tools that every run has (`begin_session`, `update_session`, `end_session`, `ask` and `wait_for_answer`). A call to any other tool is refused.
 
 | Task | Declared tools | Why |
 | --- | --- | --- |
@@ -61,7 +61,7 @@ just install
 just verify
 ```
 
-`tests/sdk-manifest.test.mjs` checks `plugin.json` against the `PluginManifest` type of `@ajour/plugin-sdk` with TypeScript. The SDK is not on npm yet, so `vendor/ajour-plugin-sdk-0.1.0.tgz` is the package built from Ajour's `packages/plugin-sdk` (`pnpm --filter @ajour/plugin-sdk build`, then `npm pack`), and `package.json` depends on it with `file:`. Replace it with a version range once the SDK is published.
+`tests/sdk-manifest.test.mjs` checks `plugin.json` against the `PluginManifest` type of `@ajour/plugin-sdk` with TypeScript. The SDK is not on npm yet, so `vendor/ajour-plugin-sdk-0.1.0.tgz` is the package built from Ajour's `packages/plugin-sdk` (`pnpm --filter @ajour/plugin-sdk build`, then `npm pack`), and `package.json` depends on it with `file:`. The vendored copy was built from Ajour's `main` at `41a473ab`. Rebuild and replace it whenever Ajour's MCP tools or manifest contract change, or this test checks against a stale list. Replace it with a version range once the SDK is published.
 
 `just package` writes `package/workday-agent-<version>.ajour-connector`. Each push to `main` publishes a prerelease with that file. The archive holds only `plugin.json` and `prompts/`.
 
