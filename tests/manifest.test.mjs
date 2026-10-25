@@ -21,10 +21,13 @@ function unknownSlots(text, task) {
     );
 }
 
-test("the manifest is an agent-task plugin with project properties for API 3", () => {
-  assert.equal(manifest.apiVersion, 3);
+test("the manifest is an agent-task plugin with project properties for API 4", () => {
+  assert.equal(manifest.apiVersion, 4);
   assert.deepEqual(Object.keys(manifest.capabilities).sort(), ["agentTask", "projectProperties"]);
-  assert.equal(manifest.entrypoint, undefined);
+  // No code, so no entrypoint, and no network or connection for the broker.
+  for (const key of ["entrypoint", "network", "connectionFields", "connectionAccess", "runtime"]) {
+    assert.equal(manifest[key], undefined, key);
+  }
   assert.deepEqual(
     tasks.map((task) => [task.id, task.placement]),
     [
@@ -45,6 +48,34 @@ for (const task of tasks) {
     const prompt = await readFile(new URL(task.prompt, root), "utf8");
     assert.deepEqual(unknownSlots(prompt, task), []);
     assert.deepEqual(unknownSlots(task.weekLink, task), []);
+  });
+}
+
+/** The Ajour MCP tools each task declares: what its prompt tells the agent to call. */
+const declaredTools = {
+  "commit-week": ["get_week_changes", "list_time_entries", "mark_entries_committed"],
+  "submit-week": ["get_week_status", "submit_week"],
+};
+/** Session tools are always allowed and never declared. */
+const sessionTools = new Set(["begin_session", "update_session", "end_session", "ask", "wait_for_answer"]);
+/** Tools a prompt names only to forbid. */
+const forbiddenTools = { "commit-week": [], "submit-week": ["mark_entries_committed"] };
+
+for (const task of tasks) {
+  test(`${task.id}: declares exactly the Ajour MCP tools its prompt uses`, async () => {
+    const prompt = await readFile(new URL(task.prompt, root), "utf8");
+    assert.deepEqual([...task.tools].sort(), [...declaredTools[task.id]].sort());
+    const named = new Set(prompt.match(/\b[a-z]+(?:_[a-z]+)+\b/g));
+    const unexpected = [...named].filter(
+      (name) =>
+        !name.startsWith("browser_") &&
+        !sessionTools.has(name) &&
+        !task.tools.includes(name) &&
+        !forbiddenTools[task.id].includes(name),
+    );
+    assert.deepEqual(unexpected, [], "the prompt names a tool the task does not declare");
+    for (const tool of task.tools) assert.ok(named.has(tool), `${tool} is declared but the prompt never uses it`);
+    for (const tool of forbiddenTools[task.id]) assert.ok(!task.tools.includes(tool));
   });
 }
 

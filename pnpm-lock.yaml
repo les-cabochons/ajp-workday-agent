@@ -8,11 +8,21 @@ importers:
 
   .:
     devDependencies:
+      '@ajour/plugin-sdk':
+        specifier: file:vendor/ajour-plugin-sdk-0.1.0.tgz
+        version: file:vendor/ajour-plugin-sdk-0.1.0.tgz
       tar:
         specifier: 7.5.13
         version: 7.5.13
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
 packages:
+
+  '@ajour/plugin-sdk@file:vendor/ajour-plugin-sdk-0.1.0.tgz':
+    resolution: {integrity: sha512-gom1lg239VYBHjn5GcT/hDC+pagRS5IyX6OvsDDOSurdsp3gJN622r3jonGn/GcjiI47241XuW5oiAiTE0Nvjw==, tarball: file:vendor/ajour-plugin-sdk-0.1.0.tgz}
+    version: 0.1.0
 
   '@isaacs/fs-minipass@4.0.1':
     resolution: {integrity: sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==}
@@ -34,11 +44,18 @@ packages:
     resolution: {integrity: sha512-tOG/7GyXpFevhXVh8jOPJrmtRpOTsYqUIkVdVooZYJS/z8WhfQUX8RJILmeuJNinGAMSu1veBr4asSHFt5/hng==}
     engines: {node: '>=18'}
 
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   yallist@5.0.0:
     resolution: {integrity: sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==}
     engines: {node: '>=18'}
 
 snapshots:
+
+  '@ajour/plugin-sdk@file:vendor/ajour-plugin-sdk-0.1.0.tgz': {}
 
   '@isaacs/fs-minipass@4.0.1':
     dependencies:
@@ -59,5 +76,7 @@ snapshots:
       minipass: 7.1.3
       minizlib: 3.1.0
       yallist: 5.0.0
+
+  typescript@5.9.3: {}
 
   yallist@5.0.0: {}
